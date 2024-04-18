@@ -42,6 +42,9 @@ class Task(models.Model):
     
 
 
+    
+
+
 class Attachment(models.Model):
     name = models.CharField(max_length=50)
     src = models.URLField(max_length=200)
