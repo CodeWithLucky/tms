@@ -1,11 +1,9 @@
 from . serializers import UserSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.views import APIView
-from django.contrib.auth.models import User
+from django.utils.decorators import method_decorator
 from . models import CustomUser
-from django.db import IntegrityError
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -36,9 +34,12 @@ CustomUser = get_user_model()
         
 
 class UserView(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [JWTAuthentication, SessionAuthentication]
     serializer_class = UserSerializer
+
+    @method_decorator(permission_classes([IsAuthenticated]))
+    @method_decorator(authentication_classes([JWTAuthentication, SessionAuthentication]))
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
 
     def get_queryset(self):
         user = self.request.user
@@ -49,24 +50,18 @@ class UserView(viewsets.ModelViewSet):
         else:
             return CustomUser.objects.none()  # or any other default behavior
 
-
-    def retrieve(self, request, *args, **kwargs):
-        serializer = UserSerializer(self.request.data)
-        return Response(serializer.data)
-
     def create(self, request, *args, **kwargs):
-        print(request.data)
+        user_ip = request.META.get('HTTP_X_REQUEST_FOR')
         email = request.data.get('email')
         username = request.data.get('username')
         password = request.data.get('password')
         first_name = request.data.get('first_name')
         last_name = request.data.get('last_name')
-        user = CustomUser.objects.create_user(email = email, username=username, password=password, first_name=first_name, last_name=last_name)
+        user = CustomUser.objects.create_user(email=email, username=username, password=password, first_name=first_name, last_name=last_name)
         if user:
             return super().create(request, *args, **kwargs)
         else:
-            return Response({'error' : 'Failed to create user'}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return Response({'error': 'Failed to create user'}, status=status.HTTP_400_BAD_REQUEST)
 
     class Meta:
         model = CustomUser

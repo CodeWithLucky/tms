@@ -41,10 +41,6 @@ class Task(models.Model):
         return self.name
     
 
-
-    
-
-
 class Attachment(models.Model):
     name = models.CharField(max_length=50)
     src = models.URLField(max_length=200)

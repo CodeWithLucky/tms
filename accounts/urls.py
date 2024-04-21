@@ -22,5 +22,5 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 
-    path('user/', UserView.as_view({'get': 'list'}), name='user'),
+    path('user/', UserView.as_view({'get': 'list', 'post' : 'create'}), name='user'),
 ]

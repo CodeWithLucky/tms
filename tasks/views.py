@@ -12,7 +12,7 @@ from rest_framework.authentication import SessionAuthentication
 class Label_view(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication]
-    queryset = Label.objects.all()
+    queryset = Label.objects.all() 
     serializer_class = LabelSerializer
 
 
@@ -32,6 +32,7 @@ class Task_view(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     authentication_classes = [JWTAuthentication, SessionAuthentication]
     serializer_class = TaskSerializer
+    queryset = Task.objects.all()
 
     def get_queryset(self):
         user = self.request.user

@@ -41,7 +41,7 @@ class CustomUser(AbstractUser):
 #Preferences and settings
     preferences = models.JSONField("preferences", default=dict, blank=True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'phone_number']
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'phone_number']
 
 
     def str(self):
